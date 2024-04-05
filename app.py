@@ -1,9 +1,9 @@
 from flask import Flask, jsonify, request
 from safer import CompanySnapshot
 from safer.exceptions import CompanySnapshotNotFoundException, SAFERUnreachableException
-
+from flask_cors import CORS
 app = Flask(__name__)
-
+CORS(app)
 @app.route('/search', methods=['GET'])
 def search_company():
     name = request.args.get('name', '')
