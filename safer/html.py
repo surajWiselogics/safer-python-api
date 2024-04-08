@@ -211,8 +211,8 @@ def process_company_snapshot(tree):
     :param tree: lxml.etree._ElementTree Object that contains the HTMl from the page
     :return: Parsed values in a dictionary
     """
-
     general_info_table = tree.xpath("//table")[6]
+    print(general_info_table)
 
     operation_classification_table = tree.xpath(
         '//table[@summary="Operation Classification"]'
@@ -226,28 +226,29 @@ def process_company_snapshot(tree):
     crashes_tables = tree.xpath('//table[@summary="Crashes"]')
 
     fields = {
-        "entity_type": "tr[2]/td/text()",
-        "legal_name": "tr[4]/td/text()",
-        "dba_name": "tr[5]/td/text()",
-        "physical_address": "tr[6]/td/text()",
-        "phone": "tr[7]/td/text()",
-        "mailing_address": "tr[8]/td/text()",
-        "usdot": "tr[9]/td[1]/text()",
-        "state_carrier_id": "tr[9]/td[2]/text()",
-        "mc_mx_ff_numbers": "tr[10]/td[1]/a/text()",
-        "duns_number": "tr[10]/td[2]/text()",
-        "power_units": "tr[11]/td[1]/text()",
+        "entity_type": "tr[3]/td/text()",
+        "us_dot_status": "tr[4]/td[1]/text()",
+        "legal_name": "tr[11]/td[1]/text()",
+        "dba_name": "tr[9]/td[1]/text()",
+        "physical_address": "tr[13]/td[1]/text()",
+        "phone": "tr[14]/td/text()",
+        "mailing_address": "tr[15]/td/text()",
+        "usdot": "tr[5]/td/text()",
+        "state_carrier_id": "tr[5]/td[2]/text()",
+        "mc_mx_ff_numbers": "tr[9]/td[1]/a/text()",
+        "duns_number": "tr[16]/td/text()",
+        "power_units": "tr[17]/td[1]/text()",
         "drivers": "tr[11]/td[2]/font/b/text()",
-        "mcs_150_form_date": "tr[12]/td[1]/text()",
-        "mcs_150_mileage_year": "tr[12]/td[2]/font/b/text()",
+        "mcs_150_form_date": "tr[6]/td/text()",
+        "mcs_150_mileage_year": "tr[6]/td[2]/text()",
     }
-
     for item in fields:
         fields[item] = process_extracted_text(general_info_table.xpath(fields[item]))
 
+    print(fields)
     # Out of Service Date comes in as a string 'None' if None
     fields["out_of_service_date"] = process_extracted_text(
-        general_info_table.xpath("tr[3]/td[2]/text()")
+        general_info_table.xpath("tr[4]/td[2]/text()")
     )
     if fields["out_of_service_date"] == "None":
         fields["out_of_service_date"] = None
@@ -257,11 +258,11 @@ def process_company_snapshot(tree):
         process_extracted_text(general_info_table.xpath("tr[3]/td[1]/text()")), str
     ):
         fields["operating_status"] = process_extracted_text(
-            general_info_table.xpath("tr[3]/td[1]/font/b/text()")
+            general_info_table.xpath("tr[8]/td[1]/font/b/text()")
         )
     else:
         fields["operating_status"] = process_extracted_text(
-            general_info_table.xpath("tr[3]/td[1]/text()")
+            general_info_table.xpath("tr[8]/td[1]/text()")
         )
 
     # Getting Operation Classifications from a list of classifications if the table exists in the HTML
